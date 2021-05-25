@@ -2,11 +2,11 @@
 
 Inheritance remains one of the most relied upon and misunderstood features of JavaScript to this day. Since ES2015 JavaScript developers have been able to ignore how the inheritance sausage is made by relying on the `class` syntax that hides the nitty gritty details, until they run into its mind-bending edge cases.
 
-In this post we'll explore the dark arts of JavaScript inheritance: `[[Prototype]]`, constructors and how to better understand your javascript objects.
+In this post we'll explore the secrets of JavaScript inheritance: `[[Prototype]]`, constructors and how to better understand your javascript objects.
 
 But first, put your knowledge to the test:
 
-## How many can you guess right?
+## How many can you get right?
 
 ### 1. Overriding getters and setters
 
@@ -90,17 +90,17 @@ console.log(instance.constructor.name);  // Overridden
 console.log(instance.constructor.prototype === Object.getPrototypeOf(instance)); // false
 ```
 
-If you got all of the above right then maybe you're already grizzled JavaScript wizard and know all the ins and outs of OOJS (Object Oriented JavaScript).
+If you got all of the above right then maybe you're already grizzled JavaScript veteran and know all the ins and outs of OOJS (Object Oriented JavaScript).
 
-For the rest of us, these are the dark arts of Javascript Inheritance.
+For the rest of us, it's time to open Pandora's Box.
 
 ## Inheritance
 
 In OOP (Object Oriented Programming), inheritance is the mechanism used build a new object or class ontop another object or class.
 
-JavaScript has inheritance but doesn't have "classes" like most other OO languages. Instead, JavaScript links objects together by [prototypes](https://en.wikipedia.org/wiki/Prototype-based_programming). Even in ES2015 [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) is mostly just syntactic sugar for objects with prototypal relationships.
+JavaScript has inheritance but doesn't have "classes" like most other OO languages. Instead, JavaScript links objects together by [prototypes](https://en.wikipedia.org/wiki/Prototype-based_programming). Even in ES2015, [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) is mostly just syntactic sugar for objects with prototypal relationships.
 
-At a glance OOJS using `class` appears to be pretty normal.
+At a glance, OOJS using `class` appears sane.
 
 ```javascript
 class Base {
@@ -161,13 +161,13 @@ console.log(Object.getPrototypeOf(Object.prototype) === null); // true
 
 ## Functions
 
-Functions are a regular JavaScript objects with additional [internal slots](https://tc39.es/ecma262/#sec-ecmascript-function-objects). Like regular objects they have properties and a `[[Prototype]]` internal slot, but unlike other objects they are callable thanks to a [`[[Call]]`](https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) internal method.
+Functions are a regular JavaScript objects, but with additional [internal slots](https://tc39.es/ecma262/#sec-ecmascript-function-objects). Like regular objects they have properties and a `[[Prototype]]` internal slot, but unlike other objects they are callable thanks to a [`[[Call]]` internal method](https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist).
 
 Constructors are functions with some specific attributes.
 
 ## Enter: Constructors
 
-Constructor functions compliment prototypes by making prototype configuration and object creation and inialisation consistent. Inheritance can still be achieved without constructors (for example with `Object.create`) but it's less common.
+Constructor functions compliment prototypes by making prototype configuration and object creation and inialisation easy and consistent. Inheritance can still be achieved without constructors (for example with `Object.create`) but it's less common.
 
 Any non-arrow function (any function created with the `function` keyword) can be used as a constructor. All non-arrow functions have a `prototype` property, initialized to a new object with only one property `prototype.constructor` whose value is the constructor function. Note that a function's `prototype` property is NOT the same as that functions `[[Prototype]]` internal slot.
 
@@ -198,7 +198,7 @@ const that = new Constructor();
 console.log(that === this_ref); // true;
 ```
 
-"classes" created with the ES2015 `class MyClass {...}` are also simply constructor functions (`typeof MyClass === 'function'`) but whose internal slots are configured differently, such as [`[[IsClassConstructor]]`](https://tc39.es/ecma262/#sec-ecmascript-function-objects) that [causes classes to throw](https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) a `TypeError` if called without the `new` operator, unlike our constructor functions not created with the `class` syntax.
+"classes" created with the ES2015 (e.g. `class MyClass {...}`) are also simply constructor functions (`typeof MyClass === 'function'`) but whose internal slots are configured differently, such as [`[[IsClassConstructor]]`](https://tc39.es/ecma262/#sec-ecmascript-function-objects) that [causes classes to throw](https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) a `TypeError` if called without the `new` operator, unlike constructor functions not created with the `class` syntax.
 
 Given that instances created with the `new` operator inherit from their constructors `prototype` property, we can create functions on the `prototype` property that will be inherited by the instances.
 
@@ -217,9 +217,9 @@ person.sayHello();  // 'hello'
 
 ## ES2015 classes without ES2015 syntax
 
-Now that we know about prototypes and constructors we can replicate the ES2015 classes functionality with constructor functions and prototypes.
+Now that we know about prototypes and constructors we can replicate the ES2015 class functionality with constructor functions and prototypes.
 
-Using constructor-prototype syntax we have enormous flexibility in how we string together our objects at the price of having to string them together manually.
+Using constructor-prototype syntax we have enormous flexibility in how we glue together our objects at the price of having to glue them together manually.
 
 We can manually accomplish what the ES2015 `class` syntax does for us by maintaining the following:
 
@@ -231,10 +231,10 @@ We can manually accomplish what the ES2015 `class` syntax does for us by maintai
 - **Constructor prototype chain**: `SubClass.[[Prototype]]` must be set to `SuperClass`. This means the `SubClass` function inherits "static" properties from `SuperClass` (properties on the SuperClass constructor function) such that:
   - `SuperClass.staticProperty = 5`
   - `SubClass.staticProperty === 5`
-- **Initialisation**: When the `SubClass` constructor is called with `new`, it needs to immediately call the `SuperClass` constructor function binding its `this` value (`SuperClass.call(this, ...)`), in order to initialise the `SuperClass` on `this` properly.
-  - The ES2015 `class` syntax forces us to call the super constructor using `super()` at the beginning of our subclasses constructor function, or else the interpreter will throw an error. This is not forced in es5 constructor functions so we need to remember it ourselves! Otherwise our class map not be properly initialised.
+- **Initialisation**: When the `SubClass` constructor is called with `new`, it needs to immediately call the `SuperClass` constructor function binding its `this` value (`SuperClass.call(this, ...)`), in order to initialise `SuperClass` on `this` properly.
+  - The ES2015 `class` syntax forces us to call the super constructor using `super()` at the beginning of our subclasses constructor function, or else the interpreter will throw an error. This is not forced in constructor-prototype syntax so we need to remember it ourselves! Otherwise our class instances will not be properly initialised.
 
-Our object relations are:
+Our object relations for the model described above are:
 
 ![test](./inheritance-full-2.png)
 
@@ -259,7 +259,9 @@ function Sub() {}
 Object.setPrototypeOf(Sub, Base);
 Sub.prototype.fn = function() {
   console.log('sub');
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // "super" call, hardcoded to `Base`
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   Base.prototype.fn.call(this);
 }
 
@@ -276,9 +278,9 @@ sub.fn();
 // base
 ```
 
-Without referencing the `Base` directly we have no way to determine where the current method under invocation sits in the prototype chain, and therefore can't lookup functions that are strictly higher in the prototype chain (i.e. a `super` call).
+Without referencing the superclass, `Base`, directly we have no way to determine where the current method under invocation sits in the prototype chain, and therefore can't lookup functions that are strictly higher in the prototype chain (i.e. a `super` call).
 
-By referencing `Base` directly in an attempt to replicate `super`, we've destroyed our ability to safely change the prototype since our "super" call will now be referencing a function we no longer inherit.
+By referencing `Base` directly in an attempt to replicate `super`, we've destroyed our ability to safely change the prototype since our "super" call would be referencing a function we no longer inherit.
 
 With ES2015, we have a `super` keyword that still works when we reassign `[[Prototype]]`
 
@@ -318,7 +320,7 @@ sub.fn();
 
 ## Pre ES2015 classes by example
 
-We'll code a simple inheritance example of 2 classes: a superclass `Animal` and subclass `Cat` using the relations described above. Each inheritance layer has 3 associated objects: the constructor function, prototype object and instance object.
+We'll code a simple inheritance example of 2 classes: a superclass `Animal` and subclass `Dog` using the relations described above. Each inheritance layer has 3 associated objects: the constructor function, prototype object and instance object.
 
 Our domain is:
 
@@ -446,7 +448,7 @@ One of the most important things to understand when working directly with protot
 ```javascript
 const base = { prop: 'hello', ref: {} };
 const sub = {};
-Object.setPrototypeOf(sub, base):
+Object.setPrototypeOf(sub, base);
 console.log(sub.prop); // 'hello'
 
 // the `delete` operator does not propagate
@@ -473,7 +475,7 @@ Knowing about prototypes is more important when working in the broader ecosystem
 
 Unfortunately, like a square peg into a round hole.
 
-TypeScript doesn't attempt to model the fine details of OOJS. It doesn't differentiate between properties on a class instance and propertyies on a classes prototype.
+TypeScript doesn't attempt to model the fine details of OOJS. It doesn't differentiate between properties on a class instance and properties on a classes prototype.
 
 ```typescript
 class MyClass {
@@ -497,7 +499,7 @@ const MyConstructor: { new(): {} } = function() {}
 // Type '() => void' is not assignable to type 'new () => {}'.
 ```
 
-To use TypeScript on the constructor function we have to resort to the unsafe `as unknown` hack. The language server also won't tell us when our prototype is missing properties
+To use TypeScript on constructor functions have to resort to the unsafe `as unknown` hack. The language server also won't tell us when our prototype is missing properties
 
 ```typescript
 interface MyInstanceAndPrototype {
@@ -540,7 +542,7 @@ sub.value = 5;
 console.log(sub.value); // undefined
 ```
 
-What happened?
+What went wrong?
 
 Writing this in pre-ES2015 syntax we have something close to:
 
@@ -551,7 +553,7 @@ function SuperClass() {
   this._value = undefined;
 }
 Object.defineProperty(SuperClass.prototype, 'value', {
-  get() { return this._value };
+  get() { return this._value },
 })
 
 function SubClass() {}
@@ -563,6 +565,8 @@ Object.defineProperty(SubClass.prototype, 'value', {
   set(to) { this._value = to; },
 });
 
+const sub = new SubClass();
+
 sub.value = 5;
 
 // What gets logged?
@@ -571,7 +575,7 @@ console.log(sub.value); // undefined
 ```
 
 Notice we have both `SubClass.prototype.value` and `SuperClass.prototype.vaue`.
-`SubClass.prototype.value` overrides `SuperClass.prototype.value`. `SubClass.prototype.value` has a setter with NO GETTER!! When we read `sub.value`, we accessing `SubClass.prototype.value` which has no getter and therefore returns `undefined`. We never reach `SuperClass.prototype.value`! This issue once cost me 4 hours in debugging hell.
+`SubClass.prototype.value` overrides `SuperClass.prototype.value`. `SubClass.prototype.value` has a setter with NO GETTER!! When we read `sub.value`, we accessing `SubClass.prototype.value` which has no getter and a value of undefined by default, and therefore returns `undefined`. We never reach `SuperClass.prototype.value`! This issue once cost me 4 hours in debugging hell.
 
 ### Explanation: 2. Deleting from a class instance
 
@@ -616,7 +620,7 @@ console.log(myInstance.fn2); // fn2() {}
 
 Notice that with `class` syntax, setting `property = ...` within the class body is roughly equivalent setting `this.property = ...` within the classes constructor. It places the property on the class instances.
 
-Conversely, `fn2() {}` within the class body sets that method to on the classes prototype `MyClass.prototype`.
+Conversely, `fn2() {}` within the class body adds that function to the classes prototype `MyClass.prototype`.
 
 The delete operator does not propagate up the prototype chain. Therefore we delete `fn1` since its on the class instance, but not `fn2` since it's on the class prototype.
 
@@ -657,7 +661,9 @@ In our example:
 
 ```javascript
 class MyClass {
-  console.log("Original Consturctor");
+  constructor() {
+    console.log("Original Consturctor");
+  }
 }
 
 MyClass.prototype.constructor = function Overridden() {
@@ -673,36 +679,35 @@ console.log(instance.constructor.prototype === Object.getPrototypeOf(instance));
 
 This example is bogus. A special place in hell is reserved for people who reassign `Constructor.prototype.constructor`.
 
-- Constructors have a `prototype` property which becomes their instances `[[Prototype]]` slot.
+- Constructors have a `prototype` property which becomes their instances `[[Prototype]]` internal slot.
 - The `prototype` initially has a single property, `constructor`, which points back to the original constructor function.
-- The `Constructor.prototype.constructor` is useful to superclasses to create new instances `this`'s class. For example, cloneable container classes.
+- The `Constructor.prototype.constructor` is useful to superclasses to create new instances of `this`'s class.
 
-Here's an example of a `Container` class that is safe to extend and still call `clone()` on:
+For example, here's a `Container` class that is safe to extend and still call `clone()` on:
 
 ```javascript
-function Container(items) { this.items = items; }
+function Container(items) {
+  this.items = items;
+}
 Container.prototype.clone = function() {
+  // we rely on prototype.constructor not being overridden
   return new (Object.getPrototypeOf(this).constructor)([...this.items]);
 }
 
 function UserContainer(users) {
-  Object
-    .getPrototypeOf(Object.getPrototypeOf(this))
-    .constructor
-    .call(this, users);
+  Container.call(this, users);
 }
 Object.setPrototypeOf(UserContainer, Container);
 Object.setPrototypeOf(UserContainer.prototype, Container.prototype);
 UserContainer.prototype.logoutAll = function() { /** ... */ }
-// ...
 
 const users = new UserContainer([]);
 const users2 = users.clone();
 console.log(users2 instanceof UserContainer); // true
 ```
 
-As far as I'm aware there's no good reason to ever change `prototype.constructor`, other than as a good april fools joke.
+As far as I'm aware there's no good reason to ever change `prototype.constructor`, other than as a good April Fools joke.
 
 ## Further Reading
 
-- Older libraries like `express` still use prototypes and constructors. Check out [Express.Request](https://github.com/expressjs/express/blob/master/lib/request.js) for an example. [Express uses Object.create()](https://github.com/expressjs/express/blob/master/lib/express.js#L46) to use reglar objects, `req` and `res`, as the `[[Prototype]]`s for the `req` and `res` of a request instance.
+- Older libraries like `express` still use prototypes and constructors. Check out [Express.Request](https://github.com/expressjs/express/blob/master/lib/request.js) for an example. [Express uses Object.create()](https://github.com/expressjs/express/blob/master/lib/express.js#L46) to use blueprint objects, `req` and `res`, as the `[[Prototype]]`s for the `req` and `res` of a request instance.
