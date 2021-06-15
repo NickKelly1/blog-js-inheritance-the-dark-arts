@@ -98,7 +98,7 @@ For the rest of us, it's time to open Pandora's Box.
 
 In OOP (Object Oriented Programming), inheritance is the mechanism used build a new object or class ontop another object or class.
 
-JavaScript has inheritance but doesn't have "classes" like most other OO languages. Instead, JavaScript links objects together by [prototypes](https://en.wikipedia.org/wiki/Prototype-based_programming). Even in ES2015, [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) is mostly just syntactic sugar for objects with prototypal relationships.
+JavaScript has inheritance but doesn't have static "classes" like static OO languages (C++, C#, Java). Instead, JavaScript links objects together by [prototypes](https://en.wikipedia.org/wiki/Prototype-based_programming). Even in ES2015, [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) is mostly just syntactic sugar for objects with prototypal relationships.
 
 At a glance, OOJS using `class` appears sane.
 
