@@ -726,7 +726,7 @@ function SyncHook(args = [], name = undefined) {
 }
 ```
 
-Calling `new SyncHook()` returns an instance of `Hook` with a `constructor` property set to `SyncHook`. The new instances property, `hook.constructor`, overrides the inherited property, `Hook.prototype.constructor`, such that `hook.constructor === SyncHook`. However, `hook instanceof SyncHook` is `false`!
+Calling `new SyncHook()` returns an instance of `Hook` with a `constructor` property set to `SyncHook`. The new instances property, `hook.constructor`, overrides the inherited property, `Hook.prototype.constructor`, such that `hook.constructor === SyncHook`. However, `hook instanceof SyncHook` is `false`.
 
 Just don't ask me why!
 
