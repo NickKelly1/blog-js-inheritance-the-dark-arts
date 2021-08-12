@@ -708,6 +708,28 @@ console.log(users2 instanceof UserContainer); // true
 
 As far as I'm aware there's no good reason to ever change `prototype.constructor`, other than as a good April Fools joke.
 
+#### **UPDATE** 2021-08-11
+
+It turns out *some* people DO reassign or override the constructor property.
+
+Take a look at this example from webpack's library for events/hooks/callbacks, [Tapable](https://www.npmjs.com/package/tapable).
+
+```ts
+// https://github.com/webpack/tapable/blob/v2.2.0/lib/SyncHook.js#L37
+function SyncHook(args = [], name = undefined) {
+  const hook = new Hook(args, name);
+  hook.constructor = SyncHook;
+  hook.tapAsync = TAP_ASYNC;
+  hook.tapPromise = TAP_PROMISE;
+  hook.compile = COMPILE;
+  return hook;
+}
+```
+
+Calling `new SyncHook()` returns an instance of `Hook` with a `constructor` property set to `SyncHook`. The new instances property, `hook.constructor`, overrides the inherited property, `Hook.prototype.constructor`, such that `hook.constructor === SyncHook`. However, `hook instanceof SyncHook` is `false`!
+
+Just don't ask me why!
+
 ## Further Reading
 
 - Older libraries like `express` still use prototypes and constructors. Check out [Express.Request](https://github.com/expressjs/express/blob/master/lib/request.js) for an example. [Express uses Object.create()](https://github.com/expressjs/express/blob/master/lib/express.js#L46) to use blueprint objects, `req` and `res`, as the `[[Prototype]]`s for the `req` and `res` of a request instance.
